@@ -1,0 +1,7 @@
+lambda/lambda.zip
+lambda/src/__pycache__/
+**/.terraform/
+**/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+/tmp/lambda-response.json
