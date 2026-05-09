@@ -19,7 +19,7 @@ variable "environment" {
 variable "schedule_expression" {
   description = "EventBridge schedule expression. Examples: rate(1 hour), cron(0 8 * * ? *)."
   type        = string
-  default     = "rate(1 hour)"
+  default     = "rate(5 minutes)"
 }
 
 variable "log_retention_days" {
