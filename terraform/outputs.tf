@@ -1,3 +1,8 @@
+output "appflow_connector_profile_name" {
+  description = "Name of the AppFlow ServiceNow connector profile."
+  value       = var.create_connector_profile ? aws_appflow_connector_profile.servicenow[0].name : var.servicenow_connector_profile_name
+}
+
 output "appflow_name" {
   description = "Name of the AppFlow flow."
   value       = aws_appflow_flow.servicenow_to_s3.name

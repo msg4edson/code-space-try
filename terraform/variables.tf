@@ -16,9 +16,33 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "create_connector_profile" {
+  description = "Set to true to let Terraform create the AppFlow connector profile. Set to false to reference an existing profile by name (required when IAM/SCP restricts appflow:CreateConnectorProfile)."
+  type        = bool
+  default     = false
+}
+
 variable "servicenow_connector_profile_name" {
-  description = "Existing Amazon AppFlow ServiceNow connector profile name in AWS account."
+  description = "Name for the Amazon AppFlow ServiceNow connector profile. Created by Terraform when create_connector_profile=true, otherwise must already exist."
   type        = string
+  default     = "ServiceNow-Dev"
+}
+
+variable "servicenow_instance_url" {
+  description = "ServiceNow instance URL (e.g. https://devXXXXX.service-now.com)."
+  type        = string
+}
+
+variable "servicenow_username" {
+  description = "ServiceNow Basic Auth username for AppFlow connector profile."
+  type        = string
+  sensitive   = true
+}
+
+variable "servicenow_password" {
+  description = "ServiceNow Basic Auth password for AppFlow connector profile."
+  type        = string
+  sensitive   = true
 }
 
 variable "servicenow_table_name" {
@@ -40,8 +64,13 @@ variable "appflow_kms_arn" {
 }
 
 variable "s3_bucket_name" {
-  description = "Destination S3 bucket for ServiceNow ingestion output."
+  description = "Destination S3 bucket for ServiceNow ingestion output. Must be globally unique across AWS."
   type        = string
+
+  validation {
+    condition = can(regex("^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.s3_bucket_name)) && !contains(["yes", "no"], lower(var.s3_bucket_name))
+    error_message = "s3_bucket_name must be a valid, globally unique bucket name and cannot be a confirmation word like 'yes' or 'no'."
+  }
 }
 
 variable "s3_bucket_prefix" {
