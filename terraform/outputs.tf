@@ -1,24 +1,29 @@
-output "function_name" {
-  description = "Name of the deployed Lambda function."
-  value       = aws_lambda_function.main.function_name
+output "appflow_name" {
+  description = "Name of the AppFlow flow."
+  value       = aws_appflow_flow.servicenow_to_s3.name
 }
 
-output "function_arn" {
-  description = "ARN of the deployed Lambda function."
-  value       = aws_lambda_function.main.arn
+output "appflow_arn" {
+  description = "ARN of the AppFlow flow."
+  value       = aws_appflow_flow.servicenow_to_s3.arn
 }
 
-output "function_invoke_arn" {
-  description = "Invocation ARN (useful for API Gateway integrations)."
-  value       = aws_lambda_function.main.invoke_arn
+output "servicenow_table_name" {
+  description = "ServiceNow source table configured in the flow."
+  value       = var.servicenow_table_name
 }
 
-output "log_group_name" {
-  description = "CloudWatch log group name for the Lambda function."
-  value       = aws_cloudwatch_log_group.lambda.name
+output "ingestion_bucket_name" {
+  description = "Name of the S3 bucket receiving ServiceNow data."
+  value       = aws_s3_bucket.servicenow_ingestion.bucket
 }
 
-output "schedule_expression" {
-  description = "EventBridge schedule expression in use."
-  value       = aws_cloudwatch_event_rule.schedule.schedule_expression
+output "ingestion_bucket_prefix" {
+  description = "Prefix path used for AppFlow output objects."
+  value       = var.s3_bucket_prefix
+}
+
+output "appflow_trigger_type" {
+  description = "Flow trigger mode currently configured."
+  value       = var.appflow_trigger_type
 }

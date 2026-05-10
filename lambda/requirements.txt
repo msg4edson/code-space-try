@@ -1,5 +1,0 @@
-# Add your Lambda dependencies here.
-# They will be installed into lambda/src/ before packaging.
-# Example:
-#   requests==2.32.3
-#   boto3==1.34.0   # already available in the Lambda runtime, add only if you need a specific version

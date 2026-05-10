@@ -4,10 +4,10 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "function_name" {
-  description = "Name for the Lambda function (also used to name related resources)."
+variable "project_name" {
+  description = "Project tag used for AppFlow and S3 resources."
   type        = string
-  default     = "my-scheduled-lambda"
+  default     = "servicenow-ingestion"
 }
 
 variable "environment" {
@@ -16,32 +16,47 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "schedule_expression" {
-  description = "EventBridge schedule expression. Examples: rate(1 hour), cron(0 8 * * ? *)."
+variable "servicenow_connector_profile_name" {
+  description = "Existing Amazon AppFlow ServiceNow connector profile name in AWS account."
   type        = string
-  default     = "rate(5 minutes)"
 }
 
-variable "log_retention_days" {
-  description = "Number of days to retain CloudWatch log entries."
-  type        = number
-  default     = 14
+variable "servicenow_table_name" {
+  description = "ServiceNow table to ingest. Default performs the initial full load of knowledge base rows."
+  type        = string
+  default     = "kb_knowledge"
 }
 
-variable "lambda_timeout" {
-  description = "Maximum execution time in seconds for the Lambda function."
-  type        = number
-  default     = 30
+variable "appflow_name" {
+  description = "Name of the AppFlow flow."
+  type        = string
+  default     = "ServiceNow_to_S3_Daily_Sync"
 }
 
-variable "lambda_memory_mb" {
-  description = "Memory allocated to the Lambda function in MB."
-  type        = number
-  default     = 128
+variable "s3_bucket_name" {
+  description = "Destination S3 bucket for ServiceNow ingestion output."
+  type        = string
 }
 
-variable "lambda_env_vars" {
-  description = "Map of environment variables to pass to the Lambda function."
-  type        = map(string)
-  default     = {}
+variable "s3_bucket_prefix" {
+  description = "S3 prefix path inside the destination bucket."
+  type        = string
+  default     = "servicenow/kb_knowledge"
+}
+
+variable "appflow_trigger_type" {
+  description = "AppFlow trigger type. Use OnDemand for first full load, Scheduled for recurring syncs."
+  type        = string
+  default     = "OnDemand"
+
+  validation {
+    condition     = contains(["OnDemand", "Scheduled"], var.appflow_trigger_type)
+    error_message = "appflow_trigger_type must be either OnDemand or Scheduled."
+  }
+}
+
+variable "schedule_expression" {
+  description = "Schedule expression used only when appflow_trigger_type is Scheduled."
+  type        = string
+  default     = "rate(1 day)"
 }

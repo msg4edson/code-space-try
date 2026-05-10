@@ -6,10 +6,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.0"
-    }
   }
 }
 
@@ -18,19 +14,10 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = var.function_name
+      Project     = var.project_name
       Environment = var.environment
       ManagedBy   = "terraform"
     }
   }
 }
 
-# ---------------------------------------------------------------------------
-# Package the Lambda source code into a zip file.
-# The zip is recreated automatically whenever any source file changes.
-# ---------------------------------------------------------------------------
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = "${path.module}/../lambda/src"
-  output_path = "${path.module}/../lambda/lambda.zip"
-}
