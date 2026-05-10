@@ -1,0 +1,224 @@
+{
+  "version": 4,
+  "terraform_version": "1.9.8",
+  "serial": 40,
+  "lineage": "95282d63-fd03-ad7c-738e-35b67000638f",
+  "outputs": {
+    "appflow_connector_profile_name": {
+      "value": "ServiceNow-Dev",
+      "type": "string"
+    },
+    "appflow_name": {
+      "value": "ServiceNow_to_S3_Daily_Sync",
+      "type": "string"
+    },
+    "appflow_trigger_type": {
+      "value": "OnDemand",
+      "type": "string"
+    },
+    "ingestion_bucket_name": {
+      "value": "sn-ingestion-076546368365-dev",
+      "type": "string"
+    },
+    "ingestion_bucket_prefix": {
+      "value": "servicenow/kb_knowledge",
+      "type": "string"
+    },
+    "servicenow_table_name": {
+      "value": "kb_knowledge",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_appflow_connector_profile",
+      "name": "servicenow",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": []
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "servicenow_ingestion",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::sn-ingestion-076546368365-dev",
+            "bucket": "sn-ingestion-076546368365-dev",
+            "bucket_domain_name": "sn-ingestion-076546368365-dev.s3.amazonaws.com",
+            "bucket_prefix": "",
+            "bucket_regional_domain_name": "sn-ingestion-076546368365-dev.s3.us-east-1.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": false,
+            "grant": [
+              {
+                "id": "4129f477a71ad12c6f1089ba240ff565d04a99d6e8e370bd17faaa67a4bb18ea",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3AQBSTGFYJSTF",
+            "id": "sn-ingestion-076546368365-dev",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "",
+            "region": "us-east-1",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": null,
+            "tags_all": {
+              "Environment": "dev",
+              "ManagedBy": "terraform",
+              "Project": "servicenow-ingestion"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": false,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "servicenow_ingestion",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "block_public_acls": true,
+            "block_public_policy": true,
+            "bucket": "sn-ingestion-076546368365-dev",
+            "id": "sn-ingestion-076546368365-dev",
+            "ignore_public_acls": true,
+            "restrict_public_buckets": true
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.servicenow_ingestion"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "name": "servicenow_ingestion",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "sn-ingestion-076546368365-dev",
+            "expected_bucket_owner": "",
+            "id": "sn-ingestion-076546368365-dev",
+            "rule": [
+              {
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": "",
+                    "sse_algorithm": "AES256"
+                  }
+                ],
+                "bucket_key_enabled": null
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.servicenow_ingestion"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_versioning",
+      "name": "servicenow_ingestion",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "sn-ingestion-076546368365-dev",
+            "expected_bucket_owner": "",
+            "id": "sn-ingestion-076546368365-dev",
+            "mfa": null,
+            "versioning_configuration": [
+              {
+                "mfa_delete": "",
+                "status": "Enabled"
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.servicenow_ingestion"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": [
+    {
+      "object_kind": "var",
+      "config_addr": "var.s3_bucket_name",
+      "status": "pass",
+      "objects": [
+        {
+          "object_addr": "var.s3_bucket_name",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "object_kind": "var",
+      "config_addr": "var.appflow_trigger_type",
+      "status": "pass",
+      "objects": [
+        {
+          "object_addr": "var.appflow_trigger_type",
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}

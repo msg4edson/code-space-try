@@ -22,6 +22,12 @@ variable "create_connector_profile" {
   default     = false
 }
 
+variable "enable_appflow" {
+  description = "Set to true to manage AppFlow resources. Set to false in restricted accounts where SCP blocks appflow:* actions."
+  type        = bool
+  default     = false
+}
+
 variable "servicenow_connector_profile_name" {
   description = "Name for the Amazon AppFlow ServiceNow connector profile. Created by Terraform when create_connector_profile=true, otherwise must already exist."
   type        = string
@@ -77,6 +83,12 @@ variable "s3_bucket_prefix" {
   description = "S3 prefix path inside the destination bucket."
   type        = string
   default     = "servicenow/kb_knowledge"
+}
+
+variable "manage_s3_bucket_security_resources" {
+  description = "Set to true to manage S3 versioning, encryption, and public access block resources. Set to false when IAM/SCP blocks read APIs like GetBucketVersioning/GetBucketEncryption/GetPublicAccessBlock."
+  type        = bool
+  default     = false
 }
 
 variable "appflow_trigger_type" {

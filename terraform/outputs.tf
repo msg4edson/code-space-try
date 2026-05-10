@@ -5,12 +5,12 @@ output "appflow_connector_profile_name" {
 
 output "appflow_name" {
   description = "Name of the AppFlow flow."
-  value       = aws_appflow_flow.servicenow_to_s3.name
+  value       = var.enable_appflow ? aws_appflow_flow.servicenow_to_s3[0].name : null
 }
 
 output "appflow_arn" {
   description = "ARN of the AppFlow flow."
-  value       = aws_appflow_flow.servicenow_to_s3.arn
+  value       = var.enable_appflow ? aws_appflow_flow.servicenow_to_s3[0].arn : null
 }
 
 output "servicenow_table_name" {
@@ -30,5 +30,5 @@ output "ingestion_bucket_prefix" {
 
 output "appflow_trigger_type" {
   description = "Flow trigger mode currently configured."
-  value       = var.appflow_trigger_type
+  value       = var.enable_appflow ? var.appflow_trigger_type : null
 }

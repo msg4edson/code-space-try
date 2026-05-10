@@ -3,6 +3,7 @@ resource "aws_s3_bucket" "servicenow_ingestion" {
 }
 
 resource "aws_s3_bucket_versioning" "servicenow_ingestion" {
+  count  = var.manage_s3_bucket_security_resources ? 1 : 0
   bucket = aws_s3_bucket.servicenow_ingestion.id
 
   versioning_configuration {
@@ -11,6 +12,7 @@ resource "aws_s3_bucket_versioning" "servicenow_ingestion" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "servicenow_ingestion" {
+  count  = var.manage_s3_bucket_security_resources ? 1 : 0
   bucket = aws_s3_bucket.servicenow_ingestion.id
 
   rule {
@@ -21,6 +23,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "servicenow_ingest
 }
 
 resource "aws_s3_bucket_public_access_block" "servicenow_ingestion" {
+  count  = var.manage_s3_bucket_security_resources ? 1 : 0
   bucket = aws_s3_bucket.servicenow_ingestion.id
 
   block_public_acls       = true

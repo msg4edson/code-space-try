@@ -1,5 +1,5 @@
 resource "aws_appflow_connector_profile" "servicenow" {
-  count           = var.create_connector_profile ? 1 : 0
+  count           = var.enable_appflow && var.create_connector_profile ? 1 : 0
 
   name            = var.servicenow_connector_profile_name
   connector_type  = "Servicenow"
