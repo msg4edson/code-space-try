@@ -41,10 +41,22 @@ Architecture:
 - Existing Amazon AppFlow ServiceNow connector profile in the target AWS account
 
 ServiceNow prerequisites for connector profile:
+- ServiceNow can be used as an Amazon AppFlow source only.
+- ServiceNow account credentials for one of these authentication modes:
+  - Basic Auth: username and password
+  - OAuth2: client ID and client secret
 - ServiceNow instance URL (example: https://devXXXXX.service-now.com)
-- Service account with roles:
-  - rest_service
-  - personalize_dictionary
+- ServiceNow role access with read permissions for:
+  - sys_db_object
+  - sys_db_object.*
+  - sys_dictionary
+  - sys_dictionary.*
+  - sys_glide_object
+  - Any table to ingest (for example: incident and incident.*)
+
+For role guidance, see ServiceNow documentation:
+- https://docs.servicenow.com/bundle/sandiego-platform-administration/page/administer/roles/reference/r_SecurityJumpStartACLRules.html
+- https://docs.servicenow.com/bundle/paris-platform-administration/page/administer/roles/concept/c_Roles.html
 
 ## Quick Start
 
@@ -60,6 +72,9 @@ servicenow_table_name             = "kb_knowledge"
 
 appflow_name                      = "ServiceNow_to_S3_Daily_Sync"
 appflow_trigger_type              = "OnDemand"
+
+# Optional: customer-managed key for AppFlow encryption
+appflow_kms_arn                   = null
 
 s3_bucket_name                    = "my-project-servicenow-ingestion"
 s3_bucket_prefix                  = "servicenow/kb_knowledge"
@@ -108,6 +123,48 @@ make s3-list
 - S3 prefix: servicenow/kb_knowledge
 - Trigger: OnDemand
 - Error handling: managed by AppFlow flow execution behavior
+
+## ServiceNow Connection Instructions (Console)
+
+1. Open Amazon AppFlow: https://console.aws.amazon.com/appflow/
+2. Choose Create flow.
+3. Enter flow name and description.
+4. Optional: customize encryption with a customer-managed KMS key.
+5. Optional: add tags.
+6. Choose ServiceNow for Source name.
+7. Choose Connect, then enter:
+   - Connection name
+   - Authentication mode (Basic Auth or OAuth2)
+   - Basic Auth credentials (username/password) or OAuth2 credentials (client ID/client secret)
+   - ServiceNow instance URL
+8. Choose Connect and then choose the ServiceNow object.
+
+## ServiceNow Considerations and Limits
+
+- ServiceNow object dropdown population may take time because AppFlow lists all available tables, including custom tables.
+- Flows can run on-demand or on schedule.
+- Maximum schedule frequency when ServiceNow is source: one run per minute.
+- Incremental scheduled flows use the sys_updated_on field.
+- ServiceNow supports up to 100,000 records per single flow run.
+- Truncate and Mask transformations are not supported for ServiceNow reference type fields:
+  - Truncate sets reference fields to an empty string.
+  - Mask sets reference fields to null.
+
+## Supported Destinations for ServiceNow Source
+
+- Amazon Connect Customer
+- Amazon Honeycode
+- Lookout for Metrics
+- Amazon Redshift
+- Amazon S3
+- Marketo
+- Salesforce
+- Snowflake
+- Upsolver
+- Zendesk
+- Custom connectors built with AppFlow Custom Connector SDKs:
+  - Python SDK: https://github.com/awslabs/aws-appflow-custom-connector-python
+  - Java SDK: https://github.com/awslabs/aws-appflow-custom-connector-java
 
 ## Verification Command
 

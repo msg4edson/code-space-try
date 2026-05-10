@@ -1,5 +1,6 @@
 resource "aws_appflow_flow" "servicenow_to_s3" {
-  name = var.appflow_name
+  name    = var.appflow_name
+  kms_arn = var.appflow_kms_arn
 
   source_flow_config {
     connector_type         = "ServiceNow"

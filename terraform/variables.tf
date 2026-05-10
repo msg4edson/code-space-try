@@ -33,6 +33,12 @@ variable "appflow_name" {
   default     = "ServiceNow_to_S3_Daily_Sync"
 }
 
+variable "appflow_kms_arn" {
+  description = "Optional customer-managed KMS key ARN used by AppFlow for data encryption. Set null to use AWS managed encryption."
+  type        = string
+  default     = null
+}
+
 variable "s3_bucket_name" {
   description = "Destination S3 bucket for ServiceNow ingestion output."
   type        = string
@@ -56,7 +62,7 @@ variable "appflow_trigger_type" {
 }
 
 variable "schedule_expression" {
-  description = "Schedule expression used only when appflow_trigger_type is Scheduled."
+  description = "Schedule expression used only when appflow_trigger_type is Scheduled. ServiceNow source supports at most one run per minute."
   type        = string
   default     = "rate(1 day)"
 }
