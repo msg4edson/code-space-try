@@ -2,6 +2,10 @@
 
 This repository provisions an ingestion pipeline that loads data from ServiceNow into Amazon S3 using Amazon AppFlow.
 
+The Terraform configuration supports:
+- Legacy single-table mode
+- Multi-table mode with one AppFlow flow per table (recommended for 2-5 tables now and scalable to larger catalogs)
+
 Initial ingestion target:
 - ServiceNow table: kb_knowledge
 - Trigger mode: OnDemand (recommended for first full ingest)
@@ -31,7 +35,7 @@ Architecture:
    - versioning enabled
    - server-side encryption (AES256)
    - public access blocked
-2. AppFlow flow configured to read from ServiceNow table kb_knowledge and write to S3.
+2. AppFlow flow resources configured to read from one or more ServiceNow tables and write to S3.
 
 ## Prerequisites
 
@@ -68,7 +72,7 @@ project_name                      = "servicenow-ingestion"
 environment                       = "dev"
 
 servicenow_connector_profile_name = "your-existing-servicenow-connector-profile"
-servicenow_table_name             = "kb_knowledge"
+servicenow_table_name             = "kb_knowledge" # legacy single-table mode
 
 appflow_name                      = "ServiceNow_to_S3_Daily_Sync"
 appflow_trigger_type              = "OnDemand"
@@ -81,6 +85,28 @@ s3_bucket_prefix                  = "servicenow/kb_knowledge"
 
 # Only used when appflow_trigger_type = "Scheduled"
 schedule_expression               = "rate(1 day)"
+
+# Recommended multi-table mode:
+# appflow_tables = {
+#   kb = {
+#     table_name           = "kb_knowledge"
+#     appflow_trigger_type = "Scheduled"
+#     schedule_expression  = "rate(1 day)"
+#     s3_bucket_prefix     = "servicenow/tables/kb_knowledge"
+#     avg_rows_per_day     = 800
+#     backfill_start_date  = "2018-01-01"
+#     priority             = 1
+#   }
+#   incident = {
+#     table_name           = "incident"
+#     appflow_trigger_type = "Scheduled"
+#     schedule_expression  = "rate(1 day)"
+#     s3_bucket_prefix     = "servicenow/tables/incident"
+#     avg_rows_per_day     = 1000
+#     backfill_start_date  = "2018-01-01"
+#     priority             = 2
+#   }
+# }
 ```
 
 2. Provision infrastructure:
@@ -98,6 +124,12 @@ make deploy
 make appflow-run
 ```
 
+For multi-table mode, start all managed flows:
+
+```bash
+make appflow-run-all
+```
+
 4. Verify ingestion in S3:
 
 ```bash
@@ -113,8 +145,11 @@ make s3-list
 - make apply: apply infrastructure changes
 - make deploy: apply ingestion infrastructure
 - make appflow-run: start on-demand AppFlow execution
+- make appflow-run-all: start on-demand execution for all managed flows
 - make appflow-status: describe flow and execution metadata
+- make appflow-status-all: describe every managed flow
 - make s3-list: list ingested objects in S3 prefix
+- make s3-list-all: list ingested objects for all managed table prefixes
 - make destroy: destroy managed infrastructure
 
 ## Configuration Defaults
@@ -123,6 +158,29 @@ make s3-list
 - S3 prefix: servicenow/kb_knowledge
 - Trigger: OnDemand
 - Error handling: managed by AppFlow flow execution behavior
+
+## Multi-Table Scaling and Backfill Windows
+
+AppFlow applies the 100,000 record limit per flow run. In multi-table mode, each table has its own flow/run budget.
+
+Recommended planning cap per run: 80,000 records (20% headroom).
+
+Use these formulas per table:
+
+- window_days = floor(80000 / avg_rows_per_day)
+- runs_per_table = ceil(backfill_days / window_days)
+
+For an 8-year backfill (2,920 days):
+
+- 1,000 rows/day => window_days=80, runs_per_table=37
+- 500 rows/day => window_days=160, runs_per_table=19
+- 200 rows/day => window_days=365 (capped), runs_per_table=8
+
+Suggested S3 prefix convention for many tables:
+
+- servicenow/tables/<table_name>/
+
+The `appflow_tables` metadata fields `avg_rows_per_day`, `backfill_start_date`, and `priority` are for planning/orchestration and are not directly consumed by AppFlow.
 
 ## ServiceNow Connection Instructions (Console)
 

@@ -7,10 +7,9 @@ servicenow_connector_profile_name = "ServiceNow-Dev"
 servicenow_instance_url           = "https://devXXXXX.service-now.com"
 servicenow_username               = "svc-appflow-user"
 servicenow_password               = "REPLACE_WITH_PASSWORD"
-servicenow_table_name             = "kb_knowledge"
 
 appflow_name                      = "ServiceNow_to_S3_Daily_Sync"
-appflow_trigger_type              = "OnDemand"
+appflow_trigger_type              = "Scheduled"
 
 # Optional customer-managed key ARN for AppFlow encryption
 appflow_kms_arn                   = null
@@ -21,3 +20,29 @@ s3_bucket_prefix                  = "servicenow/kb_knowledge"
 
 # Only used when appflow_trigger_type = "Scheduled"
 schedule_expression               = "rate(1 day)"
+
+# Multi-table mode (recommended): uncomment and edit.
+# When appflow_tables is set, Terraform creates one flow per entry.
+# appflow_tables = {
+#   kb = {
+#     table_name           = "kb_knowledge"
+#     appflow_trigger_type = "Scheduled"
+#     schedule_expression  = "rate(1 day)"
+#     s3_bucket_prefix     = "servicenow/tables/kb_knowledge"
+#     avg_rows_per_day     = 800
+#     backfill_start_date  = "2018-01-01"
+#     priority             = 1
+#   }
+#   incident = {
+#     table_name           = "incident"
+#     appflow_trigger_type = "Scheduled"
+#     schedule_expression  = "rate(1 day)"
+#     s3_bucket_prefix     = "servicenow/tables/incident"
+#     avg_rows_per_day     = 1000
+#     backfill_start_date  = "2018-01-01"
+#     priority             = 2
+#   }
+# }
+
+# Legacy single-table mode remains supported.
+# servicenow_table_name             = "kb_knowledge"

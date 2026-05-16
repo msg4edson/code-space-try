@@ -107,3 +107,28 @@ variable "schedule_expression" {
   type        = string
   default     = "rate(1 day)"
 }
+
+variable "appflow_tables" {
+  description = "Optional table catalog for multi-table ingestion. When empty, legacy single-table variables are used."
+  type = map(object({
+    enabled             = optional(bool, true)
+    table_name          = string
+    flow_name           = optional(string)
+    s3_bucket_prefix    = optional(string)
+    appflow_trigger_type = optional(string)
+    schedule_expression = optional(string)
+    avg_rows_per_day    = optional(number)
+    backfill_start_date = optional(string)
+    priority            = optional(number)
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for cfg in values(var.appflow_tables) : (
+        !can(cfg.appflow_trigger_type) || contains(["OnDemand", "Scheduled"], cfg.appflow_trigger_type)
+      )
+    ])
+    error_message = "Each appflow_tables entry must set appflow_trigger_type to OnDemand or Scheduled when provided."
+  }
+}
